@@ -89,7 +89,6 @@ Once all phases are confirmed, generate the knowledge base. Load `references/cre
    ```
    <kb-name>/
    ├── CONSTITUTION.md
-   ├── INDEX.md
    ├── LOG.md
    ├── imports/
    │   ├── _template.md
@@ -100,18 +99,20 @@ Once all phases are confirmed, generate the knowledge base. Load `references/cre
    │   ├── entities/
    │   ├── concepts/
    │   ├── synthesis/
+   │   ├── [<procedure-name>/ for each import procedure]
    │   └── [domain-specific folders]
    └── .kb/
        └── config.md
    ```
 
+   For each import procedure defined in Phase 3, create a corresponding `wiki/<procedure-name>/` folder. These hold source summary pages created during imports (e.g. `wiki/research-papers/`, `wiki/meeting-notes/`).
+
 2. Generate **CONSTITUTION.md** from all extracted answers (use template from `assets/templates/constitution.md`)
 3. Generate **import procedure files** in `imports/` (use template from `assets/templates/import-procedure.md`)
-4. Initialize **INDEX.md** (use template from `assets/templates/index.md`)
-5. Initialize **LOG.md** with the creation entry (use template from `assets/templates/log.md`)
-6. Write **.kb/config.md** with the collection name, absolute path, and settings
+4. Initialize **LOG.md** with the creation entry (use template from `assets/templates/log.md`)
+5. Write **.kb/config.md** with the collection name, absolute path, and settings
 
-7. **Register the KB.** Append an entry to `.kb/registry.md` (in the agent's root working directory):
+6. **Register the KB.** Append an entry to `.kb/registry.md` (in the agent's root working directory):
    - If `.kb/registry.md` does not exist, create it with:
      ```markdown
      # Knowledge Base Registry
@@ -122,7 +123,7 @@ Once all phases are confirmed, generate the knowledge base. Load `references/cre
    - Append a row: `| <kb-name> | <absolute-path-to-kb> | <YYYY-MM-DD> |`
    - The path MUST be absolute (not relative)
 
-8. Configure qmd:
+7. Configure qmd:
    ```bash
    qmd collection add ./wiki/ --name "<kb-name>" --mask "**/*.md"
    qmd context add qmd://<kb-name> "<domain description from CONSTITUTION>"
@@ -130,9 +131,9 @@ Once all phases are confirmed, generate the knowledge base. Load `references/cre
    qmd embed
    ```
 
-9. Prepend the creation event to LOG.md
+8. Log the creation event to LOG.md (insert below header, above existing entries)
 
-10. Report what was created and suggest next steps (importing first sources via `kb-import`).
+9. Report what was created and suggest next steps (importing first sources via `kb-import`).
 
 ## Output
 

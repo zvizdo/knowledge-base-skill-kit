@@ -2,19 +2,28 @@
 name: {{PROCEDURE_NAME}}
 trigger: "{{TRIGGER_DESCRIPTION}}"
 source_destination: raw/{{SOURCE_SUBDIR}}/
+summary_destination: wiki/{{PROCEDURE_NAME}}/
 ---
 
 # {{PROCEDURE_TITLE}} Import
+
+## Source Summary
+
+Every import creates a summary page in `wiki/{{PROCEDURE_NAME}}/`. The summary should include:
+- {{SUMMARY_FOCUS}} (e.g. key findings, main arguments, decisions made)
+- Links to the raw source file
+- `[[wikilinks]]` to all entities and concepts touched
 
 ## Extraction Steps
 
 1. Read the source document
 2. Identify: {{EXTRACTION_TARGETS}}
-3. Extract entities: {{ENTITY_TYPES_TO_EXTRACT}}
-4. Extract concepts: {{CONCEPT_TYPES_TO_EXTRACT}}
+3. Extract entities (concrete things → `wiki/entities/`): {{ENTITY_TYPES_TO_EXTRACT}}
+4. Extract concepts (frameworks, theories, models → `wiki/concepts/`): {{CONCEPT_TYPES_TO_EXTRACT}}
 
 ## Wiki Updates
 
+- Create the source summary page in `wiki/{{PROCEDURE_NAME}}/`
 - Create or update entity pages in `wiki/entities/`
 - Create or update concept pages in `wiki/concepts/`
 - Add `[[wikilinks]]` to all related existing pages (back-link pass)
@@ -27,10 +36,9 @@ source_destination: raw/{{SOURCE_SUBDIR}}/
 - Flag contradictions with existing pages explicitly
 - {{ADDITIONAL_LINKING_RULES}}
 
-## Index & Log
+## Log
 
-- Update INDEX.md with new/modified pages
-- Prepend entry to LOG.md
+- Add entry to LOG.md (insert below header, above existing entries — newest first)
 
 ## Quality Check
 

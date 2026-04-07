@@ -2,6 +2,8 @@
 
 A skill kit where LLMs build and maintain a persistent, interlinked wiki from your sources — not RAG. Five skills handle creation, import, graph-traversal querying, maintenance, and structural evolution. Plain markdown, Obsidian-compatible, [agent-skills-spec](https://agentskills.io/specification) compliant.
 
+This is not a one-time "sources to graph" conversion. The knowledge base is a living system — it grows with every import, sharpens with every query, and self-corrects through periodic maintenance. Each cycle of import → query → maintain compounds the value of what came before. The more you use it, the more it knows, and the better its answers get.
+
 ## How It Works
 
 The user never writes the wiki. The LLM writes and maintains all of it. The user curates sources, directs analysis, and asks questions.
@@ -9,18 +11,20 @@ The user never writes the wiki. The LLM writes and maintains all of it. The user
 1. **Create** a knowledge base with a guided wizard that defines purpose, entities, concepts, and import procedures
 2. **Import** sources — the LLM extracts knowledge, creates wiki pages, and weaves them into the graph via `[[wikilinks]]`
 3. **Query** using graph-traversal-first strategy — walk connections between pages, not just search isolated documents
-4. **Maintain** with health checks, link prediction algorithms, and consistency passes
+4. **Maintain** with health checks, link prediction algorithms, synthesis opportunities, and consistency passes
 5. **Evolve** the structure as your understanding of the domain deepens
+
+Knowledge compounds over time. Early imports create isolated pages; later imports discover connections to existing pages. Queries surface patterns across the graph and can be filed back as synthesis pages — cached inferences that save future queries from re-traversing the same subgraph. Maintenance predicts missing links, flags contradictions, and identifies synthesis opportunities. The KB gets denser, more connected, and more useful with every operation.
 
 ## Skills
 
 | Skill | Description |
 |-------|-------------|
-| `kb-create` | Guided creation wizard — defines purpose, entities, concepts, import procedures, scaffolds the KB |
-| `kb-import` | Import orchestrator — processes sources into wiki pages using defined import procedures |
-| `kb-query` | Graph-traversal query engine — finds entry points, walks wikilinks, synthesizes answers |
-| `kb-maintain` | Health checks and graph analysis — orphan detection, link prediction, consistency enforcement |
-| `kb-evolve` | Structural evolution — add procedures, update constitution, restructure, extend |
+| `kb-create` | Guided wizard — interactively defines purpose, entities, concepts, import procedures, scaffolds the KB, configures qmd search |
+| `kb-import` | Import orchestrator — processes sources into wiki pages using import procedures, cross-links, syncs the search index |
+| `kb-query` | Graph-traversal query engine — finds entry points, walks wikilinks, synthesizes answers, optionally files results as synthesis pages |
+| `kb-maintain` | Health checks and graph analysis — orphan detection, link prediction, synthesis opportunities, contradiction scanning, consistency enforcement |
+| `kb-evolve` | Structural evolution — add procedures, update constitution, restructure wiki, extend tooling |
 
 ## Structure
 
@@ -34,7 +38,6 @@ knowledge-base-skill-kit/
 │       └── templates/
 │           ├── constitution.md     # CONSTITUTION template
 │           ├── config.md           # .kb/config template
-│           ├── index.md            # INDEX template
 │           ├── log.md              # LOG template
 │           └── import-procedure.md # Import procedure template
 ├── kb-import/
@@ -46,7 +49,8 @@ knowledge-base-skill-kit/
 │   ├── scripts/
 │   │   ├── shortest-path.py        # Find shortest path(s) between two pages
 │   │   ├── neighborhood.py         # All pages within N hops of a starting page
-│   │   └── shared-connections.py   # Common connections between two pages
+│   │   ├── shared-connections.py   # Common connections between two pages
+│   │   └── frontmatter.py          # Extract frontmatter fields without reading full pages
 │   └── references/
 │       └── query-patterns.md       # Query types and output formats
 ├── kb-maintain/
@@ -101,7 +105,6 @@ When you run `kb-create`, it scaffolds:
 ```
 my-knowledge-base/
 ├── CONSTITUTION.md       # Governing document — purpose, entities, extraction rules
-├── INDEX.md              # Auto-maintained catalog of all wiki pages
 ├── LOG.md                # Chronological operation log (newest first)
 ├── imports/              # Import procedure definitions
 │   ├── _template.md      # Template for new procedures
@@ -110,7 +113,7 @@ my-knowledge-base/
 ├── wiki/                 # LLM-maintained synthesis layer
 │   ├── entities/         # Atomic pages for concrete things
 │   ├── concepts/         # Framework and theory pages
-│   ├── synthesis/        # Cross-cutting analysis
+│   ├── synthesis/        # Cached inferences — derived relationships, patterns, comparisons
 │   └── [custom]/         # Domain-specific directories
 └── .kb/
     └── config.md         # KB name, absolute path, qmd collection, preferences

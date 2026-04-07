@@ -47,7 +47,7 @@ Look for claims in different pages that conflict:
 
 - Read pages on related topics (use the graph neighborhood)
 - Flag any factual contradictions
-- **Action**: Note contradictions in both pages, or create a synthesis page analyzing the conflict
+- **Action**: Note contradictions in both pages, or create a synthesis page analyzing the conflict (use `synthesis-type: contradiction` and follow the synthesis page structure defined in `kb-query/references/query-patterns.md`)
 
 ### 3. Staleness Check
 
@@ -93,7 +93,31 @@ python scripts/cluster-detection.py {KB_ROOT}/wiki/
 
 Review the suggestions. Add links where the prediction makes semantic sense (not all algorithmic suggestions are meaningful).
 
-### 7. Concept Consolidation
+### 7. Synthesis Opportunities
+
+Surface places in the graph where a synthesis page would add value — connecting distant clusters, documenting cross-cutting patterns, or pre-computing frequently needed traversals.
+
+1. **Cluster bridging** — From cluster detection output (Step 6), identify pairs of clusters connected by only 1-2 bridge pages. A synthesis page could strengthen the bridge and make the connection explicit.
+2. **Cross-subdirectory connections** — From Jaccard/Adamic-Adar output, find high-scoring page pairs in *different* subdirectories (e.g., an entity and a concept that relate but aren't directly linked). These are synthesis candidates.
+3. **Synthesis staleness** — For existing synthesis pages with a `derived-from` frontmatter field, compare the synthesis `updated` date against `updated` dates of its derived-from pages. If source pages are newer, the synthesis may be stale. If `derived-from` is missing, suggest adding it.
+
+**Report format:**
+```markdown
+### Synthesis Opportunities
+- **New**: [description] — connects [[A]], [[B]], [[C]] across entities/concepts
+- **Stale**: [[Existing Synthesis]] — derived-from pages updated since last synthesis update
+```
+
+**Action — interactive runs:** Present the list to the user. For approved candidates, create synthesis pages immediately following the structure in `kb-query/references/query-patterns.md`. Do NOT auto-create.
+
+**Action — scheduled/autonomous runs:** If the user has explicitly configured maintenance to run autonomously (e.g., on a cron schedule with auto-synthesis enabled), create synthesis pages for **clear-cut cases only**:
+- Contradictions between pages that directly conflict on a specific factual claim
+- Clusters of 5+ pages sharing 3+ common concepts with no existing synthesis connecting them
+- Existing synthesis pages whose derived-from pages have all been updated since the synthesis
+
+Skip ambiguous cases — if the synthesis would require subjective judgment about what pattern to highlight or which framing to use, log the opportunity instead and leave it for an interactive session.
+
+### 8. Concept Consolidation
 
 Look for near-duplicate concepts:
 
@@ -101,22 +125,13 @@ Look for near-duplicate concepts:
 - Use Jaccard similarity output to identify candidates
 - **Action**: Merge duplicates, redirect links
 
-### 8. Concept Splitting
+### 9. Concept Splitting
 
 Look for pages that have grown too large:
 
 - Pages over 500 lines may need to be split into sub-pages
 - Hub pages linking to 20+ other pages may be doing too much
 - **Action**: Propose splits to the user
-
-### 9. Index Sync
-
-Ensure INDEX.md is complete and accurate:
-
-- Every page in `{KB_ROOT}/wiki/` should appear in INDEX.md
-- Every entry in INDEX.md should have a corresponding file
-- Summaries should still be accurate
-- **Action**: Update INDEX.md to match reality
 
 ### 10. qmd Sync
 
@@ -147,7 +162,7 @@ Compact old log entries:
 
 ### 12. Log Entry
 
-Prepend the maintenance results to LOG.md:
+Insert the following entry into LOG.md **directly below the file's header block** (above all existing entries — the log is reverse-chronological, newest first):
 
 ```markdown
 ## [YYYY-MM-DD HH:MM] maintain | Health Check
@@ -157,7 +172,7 @@ Prepend the maintenance results to LOG.md:
 - Stale pages: N (flagged for review)
 - Link predictions: N suggested (N added)
 - Contradictions: N found
-- Index: N entries added/updated
+- Synthesis: N opportunities found (N created, N stale flagged)
 - qmd: synced
 - Log: compacted entries older than 7 days
 ```

@@ -23,7 +23,7 @@ Follow these steps in order to determine which KB to operate on:
 Once resolved, set `{KB_ROOT}` to the KB's absolute path, then:
 - Read `{KB_ROOT}/.kb/config.md` for KB name and qmd collection
 - Read `{KB_ROOT}/CONSTITUTION.md` to understand current state
-- Read `{KB_ROOT}/INDEX.md` to understand current wiki contents
+- Scan existing pages with `glob wiki/**/*.md` and `qmd search` to understand current wiki contents
 
 All paths below are relative to `{KB_ROOT}`.
 
@@ -38,7 +38,8 @@ Create a new import procedure for a source type not yet covered.
 2. Walk through the same questions as kb-create Phase 3, but for this one source type
 3. Generate a new `{KB_ROOT}/imports/<name>.md` using the import procedure template
 4. Create `{KB_ROOT}/raw/<subdir>/` for the source files
-5. Prepend to LOG.md
+5. Create `{KB_ROOT}/wiki/<procedure-name>/` for source summary pages produced by this procedure
+6. Log to LOG.md (insert below header, above existing entries)
 
 **Template location:** Load `kb-create/assets/templates/import-procedure.md` for the procedure format.
 
@@ -60,7 +61,7 @@ Revise the governing document as understanding deepens.
 3. Make the change
 4. Review the impact: do existing pages need updating to match new rules?
 5. If yes, flag pages for review (don't auto-rewrite existing content)
-6. Prepend to LOG.md
+6. Log to LOG.md (insert below header, above existing entries)
 
 ### 3. Restructure Wiki
 
@@ -73,11 +74,12 @@ Move pages, rename directories, reorganize categories.
 - **Merge pages**: Combine two pages into one, consolidating content and redirecting all inbound links
 - **Split pages**: Break a large page into sub-pages, updating links accordingly
 
+**Synthesis-aware:** When merging or splitting synthesis pages, update their `derived-from` fields to remain accurate. When deleting or renaming entity/concept pages, check if any synthesis page lists them in `derived-from` and update accordingly.
+
 **After any restructure:**
 1. Update all `[[wikilinks]]` across the wiki to reflect changes
-2. Update INDEX.md
-3. Prepend to LOG.md
-4. Re-sync qmd:
+2. Log to LOG.md (insert below header, above existing entries)
+3. Re-sync qmd:
    ```bash
    qmd update --collections <kb-name>
    qmd embed --force
@@ -96,7 +98,7 @@ Re-run imports on existing sources with updated rules.
 1. Identify which sources need re-processing
 2. For each source, re-run the import procedure with the updated CONSTITUTION
 3. This may create new pages, update existing ones, or add new connections
-4. Run full maintenance after bulk re-processing
+4. Run full maintenance after bulk re-processing — pay particular attention to Synthesis Opportunities (Step 7) to identify synthesis pages that are now stale due to re-processed content
 
 ### 5. Registry Maintenance
 
@@ -132,6 +134,7 @@ All scripts should:
 
 ## LOG Entry
 
+Insert the following into LOG.md **directly below the file's header block** (above all existing entries — the log is reverse-chronological, newest first):
 ```markdown
 ## [YYYY-MM-DD HH:MM] evolve | Description of Change
 

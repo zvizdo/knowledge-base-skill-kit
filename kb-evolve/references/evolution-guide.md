@@ -57,8 +57,7 @@ The trickiest operation because it requires updating all references.
 1. Find all inbound `[[wikilinks]]` to the page being renamed
 2. Rename the file
 3. Update all `[[wikilinks]]` across the entire wiki
-4. Update INDEX.md
-5. Run `qmd update --collections <kb-name> && qmd embed`
+4. Run `qmd update --collections <kb-name> && qmd embed`
 
 Use `grep -r '[[Old Name]]' wiki/` to find all references before renaming.
 
@@ -72,7 +71,6 @@ When two pages should be one:
 4. Consolidate the `sources` frontmatter list
 5. Update all `[[wikilinks]]` from the deleted page to point to the survivor
 6. Delete the merged-away page
-7. Update INDEX.md
 
 ### Splitting Pages
 
@@ -82,7 +80,6 @@ When one page has grown too large:
 2. Create the new sub-pages
 3. Convert the original into an overview page that links to all sub-pages
 4. Update external `[[wikilinks]]` — decide whether they should point to the overview or a specific sub-page
-5. Update INDEX.md
 
 ### Adding Directories
 

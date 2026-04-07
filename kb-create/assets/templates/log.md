@@ -1,6 +1,6 @@
 # LOG — {{KB_NAME}}
 
-> Reverse-chronological record of all operations. Newest entries first. Entries older than 7 days are compacted into weekly summaries during maintenance.
+> Reverse-chronological record of all operations. **Newest entries first — always insert new entries directly below this header, never at the bottom of the file.** Entries older than 7 days are compacted into weekly summaries during maintenance.
 
 ## [{{CREATED_DATE}}] create | Knowledge Base Created
 

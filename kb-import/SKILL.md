@@ -52,46 +52,64 @@ Identify which import procedure applies:
 Before processing, read:
 1. The selected import procedure (`{KB_ROOT}/imports/<name>.md`)
 2. `{KB_ROOT}/CONSTITUTION.md` (extraction rules, connection rules, entity types, concept types)
-3. `{KB_ROOT}/INDEX.md` (to know what already exists)
-4. Recent entries in `{KB_ROOT}/LOG.md` (first 30 lines — for recent context)
+3. Recent entries in `{KB_ROOT}/LOG.md` (first 30 lines — for recent context)
+4. Scan existing pages with `glob wiki/**/*.md` and `qmd search` to know what already exists
 
-### Step 4 — Extract & Create
+### Step 4 — Summarize Source
 
-Follow the import procedure's extraction steps:
+Every import produces a source summary page — a first-class node in the wiki graph.
 
 1. Read the source document thoroughly
-2. Identify entities, concepts, findings, and relationships as defined by the procedure
-3. For each entity found:
-   - Check if a page already exists (search INDEX.md, then `qmd search "<entity name>" -c <collection>`)
-   - If exists: **update** the existing page with new information, adding the new source to its `sources` frontmatter
-   - If new: **create** a new page in `{KB_ROOT}/wiki/entities/` using the wiki page format (see below)
-4. For each concept touched:
-   - Same create-or-update logic as entities
-5. If the source warrants it, create a source summary page (type: `source-summary`) that links to all entities and concepts it touched
+2. Create a summary page in `{KB_ROOT}/wiki/<procedure-name>/` (e.g. `wiki/research-papers/paper-title.md`)
+   - Create the `wiki/<procedure-name>/` folder if it doesn't exist yet
+3. The summary page must:
+   - Use `type: source-summary` in frontmatter
+   - Link to the raw file in its `sources` field (e.g. `sources: [raw/papers/original.pdf]`)
+   - Contain a structured summary of the source's key content, findings, and arguments
+   - Include `[[wikilinks]]` to all entities and concepts that will be created or updated in Step 5
+4. Follow the import procedure's summary guidance (if defined) for what to emphasize
 
-### Step 5 — Back-Link Pass
+This makes the summary visible and linkable in Obsidian as part of the wiki graph.
+
+### Step 5 — Extract & Create
+
+Follow the import procedure's extraction steps to create or update entity and concept pages:
+
+1. **Entities** — concrete things: people, organizations, tools, events, etc. These go in `wiki/entities/`.
+   - For each entity identified in the source:
+     - Check if a page already exists (use `qmd search "<entity name>" -c <collection>` and `glob wiki/**/<slug>*.md`)
+     - If exists: **update** the existing page with new information, adding the new source to its `sources` frontmatter
+     - If new: **create** a new page in `{KB_ROOT}/wiki/entities/` using the wiki page format (see below)
+
+2. **Concepts** — frameworks, theories, models, abstract analytical lenses. These go in `wiki/concepts/`.
+   - For each concept identified in the source:
+     - Check if a page already exists (use `qmd search "<concept name>" -c <collection>` and `glob wiki/**/<slug>*.md`)
+     - If exists: **update** the existing page with new information or supporting evidence, adding the new source to its `sources` frontmatter
+     - If new: **create** a new page in `{KB_ROOT}/wiki/concepts/` using the wiki page format (see below)
+
+3. Ensure all new entity and concept pages link back to the source summary page created in Step 4
+
+4. **Synthesis check** — Search for existing synthesis pages whose `derived-from` frontmatter field includes any entity or concept page that was just created or updated. Note these in the import report (Step 9) as potentially needing review. Do not auto-update synthesis pages during import.
+
+The CONSTITUTION defines which specific entity types and concept frameworks apply to this KB. Consult it to decide what qualifies as an entity vs a concept.
+
+### Step 6 — Back-Link Pass
 
 This is critical. After creating/updating pages:
 
-1. For every NEW page created, search existing wiki pages for mentions of the new page's topic
+1. For every NEW page created (including the source summary), search existing wiki pages for mentions of the new page's topic
    - Use `qmd search "<page topic>" -c <collection>` to find semantically related existing pages
    - Add `[[wikilinks]]` from those existing pages to the new page where relevant
 2. For every UPDATED page, check if new content creates connections to pages not yet linked
 3. Ensure every new page has at least 2 inbound `[[wikilinks]]` (CONSTITUTION minimum)
 
-### Step 6 — Update INDEX.md
-
-For every page created or updated:
-- Add new entries to the appropriate section (Entities, Concepts, Synthesis)
-- Update existing entries if their summary changed
-- Format: `- [[Page Name]] — one-line summary (source count: N, last updated: YYYY-MM-DD)`
-
 ### Step 7 — Update LOG.md
 
-Prepend an entry to LOG.md:
+Insert the following entry into LOG.md **directly below the file's header block** (above all existing entries — the log is reverse-chronological, newest first):
 ```markdown
 ## [YYYY-MM-DD HH:MM] import | "Source Title or Description"
 - Procedure used: <procedure-name>
+- Summary: wiki/<procedure-name>/<summary-page>.md
 - Created: [[New Page 1]], [[New Page 2]]
 - Updated: [[Existing Page 1]], [[Existing Page 2]]
 - Source: raw/path/to/source.ext
@@ -107,10 +125,12 @@ qmd update --collections <kb-name> && qmd embed
 ### Step 9 — Report
 
 Tell the user:
-- What pages were created (with `[[wikilinks]]`)
+- The source summary page created (with `[[wikilink]]`)
+- What entity and concept pages were created (with `[[wikilinks]]`)
 - What pages were updated
 - How many new connections were made
 - Any contradictions found with existing content
+- Synthesis pages that may need review: `[[Page]]` (reason: derived-from page `[[X]]` was updated)
 - Any questions or ambiguities the user should resolve
 
 ## Wiki Page Format
@@ -120,6 +140,7 @@ Every wiki page follows this structure:
 ```markdown
 ---
 type: entity | concept | synthesis | source-summary
+summary: "One-line description of what this page covers"
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 sources: [raw/path/to/source1.ext, raw/path/to/source2.ext]
@@ -135,11 +156,23 @@ tags: [domain-specific tags]
 - [[Link2]] — relationship description
 ```
 
+**Page locations by type:**
+- `entity` → `wiki/entities/`
+- `concept` → `wiki/concepts/`
+- `synthesis` → `wiki/synthesis/`
+- `source-summary` → `wiki/<procedure-name>/` (named after the import procedure that created it)
+
+**Synthesis pages use additional frontmatter fields:**
+- `synthesis-type`: comparison | pattern | contradiction | gap-analysis | framework-application
+- `derived-from`: list of wiki page slugs whose content was used to produce the synthesis (enables staleness detection and impact analysis)
+
+See `kb-query/references/query-patterns.md` for the full synthesis page structure.
+
 Domain-specific frontmatter fields are defined in the CONSTITUTION.
 
 ## Key Principles
 
-- **A single source may touch many wiki pages.** A research paper might create 1 summary, update 3 concepts, add to 2 entities, and strengthen a synthesis page.
+- **A single source may touch many wiki pages.** A research paper might create 1 summary, update 3 concepts, and add to 2 entities. If updated pages appear in the `derived-from` field of existing synthesis pages, flag those synthesis pages for review in the report.
 - **Always update, never duplicate.** If a page exists, add to it. Don't create a second page for the same entity.
 - **The back-link pass is not optional.** New pages must be woven into the existing graph.
 - **Cite sources.** Every claim on a wiki page should trace back to a source in `raw/`.

@@ -34,7 +34,7 @@ Two options:
 ### For LARGE sources (books, long reports)
 
 - Process in chapters or sections
-- Create a source summary page that links to all extracted content
+- The source summary page (in `wiki/<procedure-name>/`) should cover the full source but can note which sections were prioritized
 - Don't try to extract everything in one pass — prioritize what the CONSTITUTION says matters most
 
 ### For CONFLICTING information
@@ -47,7 +47,7 @@ When new source contradicts existing wiki content:
 
 ### For UPDATE sources (new version of something already imported)
 
-- Find the existing source summary page
+- Find the existing source summary page in `wiki/<procedure-name>/`
 - Update it with changes
 - Propagate updates to entity and concept pages
 - Note what changed in the LOG entry
@@ -67,11 +67,12 @@ The back-link pass ensures new pages don't become orphans. After creating pages:
 
 ## Quality Checklist (after every import)
 
+- [ ] A source summary page exists in `wiki/<procedure-name>/` and links to the raw file
 - [ ] All new pages have YAML frontmatter with correct `type`, `created`, `sources`
 - [ ] All new pages have a `## Related` section with at least 2 `[[wikilinks]]`
-- [ ] All new pages are listed in INDEX.md
+- [ ] Entity pages are in `wiki/entities/`, concept pages are in `wiki/concepts/`
 - [ ] Existing pages that should reference new content have been updated
-- [ ] LOG.md has a prepended entry for this import
+- [ ] LOG.md has a new entry inserted below the header (above prior entries — newest first)
 - [ ] No `[[wikilinks]]` point to nonexistent pages (unless intentional stubs)
 - [ ] `qmd update && qmd embed` has been run
 - [ ] Contradictions (if any) are flagged, not silently resolved

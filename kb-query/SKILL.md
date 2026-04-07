@@ -1,6 +1,6 @@
 ---
 name: kb-query
-description: Query the knowledge base using graph-traversal-first strategy — finds entry points via INDEX or qmd, walks wikilink connections to gather context, synthesizes answers grounded in the graph, and optionally files results back as synthesis pages.
+description: Query the knowledge base using graph-traversal-first strategy — finds entry points via filesystem scan and qmd, walks wikilink connections to gather context, synthesizes answers grounded in the graph, and optionally files results back as synthesis pages.
 ---
 
 # kb-query — Query the Knowledge Base
@@ -40,10 +40,17 @@ Parse what the user is asking. Classify the query type:
 
 ### Step 2 — Find Entry Points
 
-Find 1-3 wiki pages most relevant to the question. Use both:
+Find 1-3 wiki pages most relevant to the question:
 
-1. **INDEX.md scan** — Browse the catalog for exact or near matches
-2. **qmd semantic search** — `qmd vsearch "<query>" -c <collection>` for conceptually related pages
+1. **Narrow candidates** — Use one or both to build a short list:
+   - `glob wiki/**/*.md` — scan filenames for matches
+   - `qmd vsearch "<query>" -c <collection>` — semantic search for conceptually related pages
+2. **Assess relevance** — For ambiguous candidates, check frontmatter instead of reading full pages:
+   - Single file: `scripts/frontmatter.py {KB_ROOT}/wiki/ "entities/candidate.md" --fields summary,type,tags`
+   - A subdirectory: `scripts/frontmatter.py {KB_ROOT}/wiki/ "concepts/*.md" --fields summary`
+   - Multiple specific files: run once per candidate or scope to their shared directory
+
+Skip step 2 when filenames or qmd results already make the right entry points obvious.
 
 These are starting nodes, not the answer.
 
@@ -79,6 +86,8 @@ Construct the answer from the traversal:
 - **Flag gaps**: If the question can't be fully answered, say what's missing
 - **Note contradictions**: If different pages disagree, surface both perspectives
 
+This is synthesis-as-reasoning — it happens every query and is ephemeral. The decision to *persist* it as a synthesis page happens in Step 7.
+
 ### Step 6 — Choose Output Format
 
 Match the format to the question:
@@ -93,19 +102,33 @@ Match the format to the question:
 
 ### Step 7 — Optionally File Back
 
-If the answer is worth keeping:
+Synthesis-as-reasoning (Step 5) is ephemeral. This step decides whether to persist it as a synthesis page — a cached inference that saves future queries from re-traversing the same subgraph.
 
-1. Ask the user: "This seems worth saving. Want me to file it as a synthesis page?"
-2. If yes: create a new page in `{KB_ROOT}/wiki/synthesis/` with type `synthesis`
-3. Add `[[wikilinks]]` to all pages referenced in the answer
-4. Perform a back-link pass (add links from referenced pages back to the new synthesis)
-5. Update INDEX.md
-6. Prepend to LOG.md
+**Prompt the user to file when the answer meets ANY of:**
+- Traversal touched 4+ pages across 2+ wiki subdirectories
+- Answer reveals a relationship not stated on any single page
+- Answer resolves or documents a contradiction
+- Answer compares 3+ entities
+- Answer identifies a gap pattern (systematic missing knowledge)
+
+**Do NOT prompt when:**
+- Answer restates what a single page already says
+- Query was about KB health or structure
+- Answer is purely factual with no derived inference
+
+**If the user agrees to file:**
+
+1. Create a new page in `{KB_ROOT}/wiki/synthesis/` following the synthesis page structure defined in `references/query-patterns.md`
+2. Use the appropriate `synthesis-type` (comparison, pattern, contradiction, gap-analysis, framework-application)
+3. Populate `derived-from` with slugs of every wiki page whose content contributed to the synthesis
+4. Add `[[wikilinks]]` to all pages referenced in the answer
+5. Perform a back-link pass (add links from referenced pages back to the new synthesis)
+6. Log to LOG.md (insert below header, above existing entries)
 7. Run `qmd update --collections <kb-name> && qmd embed`
 
 ## Graph Scripts
 
-Three Python scripts for graph analysis. All parse `[[wikilinks]]` directly from markdown files.
+Four Python scripts for graph analysis and discovery. All use Python stdlib only.
 
 ### shortest-path.py
 
@@ -137,9 +160,20 @@ python scripts/shared-connections.py {KB_ROOT}/wiki/ "<Page A>" "<Page B>"
 
 Output: Common outbound links, common inbound links. Reveals hidden commonalities.
 
+### frontmatter.py
+
+Extract YAML frontmatter from wiki pages without reading full content. Useful for assessing page relevance during entry point discovery.
+
+```bash
+python scripts/frontmatter.py {KB_ROOT}/wiki/ --fields summary,type,tags
+python scripts/frontmatter.py {KB_ROOT}/wiki/ "entities/*.md" --fields summary
+```
+
+Output: Page name, path, and requested frontmatter fields. Avoids loading full page content into context.
+
 ## LOG Entry
 
-After answering a query (whether filed or not):
+After answering a query (whether filed or not), insert the following into LOG.md **directly below the file's header block** (above all existing entries — the log is reverse-chronological, newest first):
 
 ```markdown
 ## [YYYY-MM-DD HH:MM] query | "User's question"

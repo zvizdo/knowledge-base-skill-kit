@@ -57,12 +57,15 @@ Create one `imports/<name>.md` file per source type using the import procedure t
 
 Also create `raw/` subdirectories for each source type (e.g., `raw/research/`, `raw/interviews/`).
 
+Create a corresponding `wiki/<procedure-name>/` folder for each import procedure (e.g., `wiki/research-papers/`, `wiki/interviews/`). These hold the source summary pages that kb-import creates during each import.
+
 ### Phase 4 — Structure & Preferences
 
 Standard wiki subdirectories are always created:
 - `wiki/entities/` — atomic pages for concrete things
 - `wiki/concepts/` — framework and theory pages
-- `wiki/synthesis/` — cross-cutting analysis and comparisons
+- `wiki/synthesis/` — cached inferences capturing derived relationships, patterns, and comparisons across entities and concepts. Created by kb-query (filing query answers) and kb-maintain (synthesis opportunities). Reading one synthesis page replaces traversing the 5-10 pages it draws from.
+- `wiki/<procedure-name>/` — one per import procedure, holds source summary pages
 
 The user may want additional directories for domain-specific categories. Examples:
 - `wiki/timelines/` for chronological analyses
@@ -136,7 +139,7 @@ After scaffolding, append an entry to `.kb/registry.md` in the agent's root work
 - All directories exist
 - CONSTITUTION.md is written and accurate
 - All import procedures are in `imports/`
-- INDEX.md and LOG.md are initialized
+- LOG.md is initialized
 - qmd collection is created and indexed
 - `.kb/config.md` has the collection name and absolute path
 - `.kb/registry.md` has an entry for this KB

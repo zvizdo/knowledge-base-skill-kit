@@ -16,7 +16,7 @@ When answering "How does X relate to Y?", the shortest path between X and Y thro
 
 "What do we know about attachment theory?"
 
-1. Find [[Attachment Theory]] via INDEX.md
+1. Find [[Attachment Theory]] via filename match or `qmd search`
 2. Read it
 3. Follow its `## Related` links to see connected entities and concepts
 4. Synthesize a comprehensive answer from the page and its immediate neighbors
@@ -76,20 +76,85 @@ Three search modes, use the right one:
 
 After finding entry points via qmd, switch to graph traversal. qmd finds the door; the graph walk finds the answer.
 
-## Filing Answers as Synthesis Pages
+## Synthesis Pages
 
-Good candidates for filing:
-- Comparisons that took significant traversal to construct
-- Relationship analyses that revealed non-obvious connections
-- Gap analyses that map what's known vs unknown
-- Any answer the user says "that's useful, keep it"
+### What Synthesis Is
 
-When filing, the synthesis page should:
-- Have `type: synthesis` in frontmatter
-- List all source pages in its `## Related` section
-- Be written to stand alone (someone reading just that page should understand it)
-- Be added to the Synthesis section of INDEX.md
+A synthesis page is a **cached inference** — it captures reasoning the LLM derived by traversing multiple pages, so future queries can read one page instead of re-walking the same subgraph and re-deriving the same conclusions.
 
-Bad candidates for filing:
-- Simple factual lookups (the answer is already in the entity page)
-- Queries about KB health or status (use maintenance for that)
+Synthesis pages contain:
+- **Derived relationships** that don't exist on any single entity or concept page (e.g., "A and B share pattern X, which contradicts C")
+- **Cross-cutting patterns** across multiple entities or concepts that only become visible when you traverse a subgraph
+- **Evaluated conclusions** — the "so what?" that requires combining evidence from multiple sources
+
+### What Synthesis Is NOT
+
+- A summary of a single source (that's `source-summary`)
+- A restatement of what one entity page already says (that's a factual lookup)
+- A concept definition (that belongs in `wiki/concepts/`)
+- An index or table of contents (that's structure, not reasoning)
+
+### Litmus Tests
+
+1. **Grounded?** Could the LLM reconstruct this page's conclusions by reading only the pages listed in its `derived-from` field? If yes, the synthesis is valid — it captures real inference from real sources.
+2. **Worth caching?** Will a future query likely need this same traversal? If the derivation is non-trivial or the connected ideas are far apart in the graph, it's worth persisting.
+
+### When to File
+
+**Prompt the user to file when the answer meets ANY of these:**
+- The traversal touched 4+ pages across 2+ wiki subdirectories
+- The answer reveals a relationship not stated on any single page
+- The answer resolves or documents a contradiction between pages
+- The answer compares 3+ entities
+- The answer identifies a gap pattern (systematic missing knowledge)
+- The user says "that's useful, keep it"
+
+**Do NOT prompt when:**
+- The answer restates what a single entity or concept page already says
+- The query was about KB health or structure
+- The answer is purely factual with no derived inference
+
+### Synthesis Page Structure
+
+```markdown
+---
+type: synthesis
+synthesis-type: comparison | pattern | contradiction | gap-analysis | framework-application
+summary: "One-line statement of the conclusion"
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+sources: [raw/... if applicable]
+derived-from: [page-slug-1, page-slug-2, ...]
+tags: [domain-specific tags]
+---
+
+# Title (a claim or question, not just a topic)
+
+## Key Finding
+2-3 sentences stating the core insight. This is the pre-computed answer —
+a future query can read just this section and get the conclusion.
+
+## Evidence
+Reasoning chain with [[wikilink]] citations.
+Structure: evidence → inference → conclusion.
+
+## Caveats
+What this synthesis doesn't account for. Gaps in source material.
+Conditions under which the conclusion might not hold.
+
+## Related
+- [[Page1]] — role in this synthesis (e.g., "primary evidence for X")
+- [[Page2]] — role in this synthesis
+```
+
+**Frontmatter fields:**
+- `synthesis-type` — the kind of synthesis: `comparison`, `pattern`, `contradiction`, `gap-analysis`, or `framework-application`
+- `derived-from` — every wiki page slug whose content was used to produce this synthesis. Enables staleness detection during maintenance and impact analysis during import.
+
+### Quality Guidelines
+
+- **Lead with the conclusion.** The Key Finding section should be self-contained — 80% of the value without reading linked pages.
+- **Wikilinks are citations, not required reading.** A synthesis page that requires you to read its linked pages to understand it has failed. The links are for verification and deeper exploration.
+- **Aim for under 200 lines.** If longer, consider splitting. A synthesis page as long as the pages it synthesizes defeats the purpose.
+- **Name as a claim or question.** `impact-of-sleep-on-training-adaptations.md` is better than `sleep-and-training.md`. The filename should hint at the conclusion.
+- **Stand alone.** Someone reading just this page should understand it without context.
