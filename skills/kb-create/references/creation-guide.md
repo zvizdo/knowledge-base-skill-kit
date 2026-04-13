@@ -84,7 +84,7 @@ The user may want additional directories for domain-specific categories. Example
 
 ### Phase 5 — Scaffold
 
-After confirming everything, generate all files. Use the templates in `assets/templates/` as starting points, filling in the user's specific answers.
+After confirming everything, generate all files. Use the templates in `templates/` as starting points, filling in the user's specific answers.
 
 **CONSTITUTION.md generation:**
 - Purpose section from Phase 1

@@ -1,0 +1,31 @@
+{
+  "name": "knowledge-base-skill-kit",
+  "version": "1.0.0",
+  "description": "Five Claude Code skills for building and maintaining a persistent, graph-structured knowledge base.",
+  "keywords": [
+    "claude-code",
+    "claude-plugin",
+    "agent-skills",
+    "knowledge-base",
+    "wiki",
+    "zettelkasten"
+  ],
+  "author": "Anže Kravanja",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zvizdo/knowledge-base-skill-kit.git"
+  },
+  "homepage": "https://github.com/zvizdo/knowledge-base-skill-kit#readme",
+  "files": [
+    "manifest.json",
+    "install.sh",
+    "skills/**"
+  ],
+  "scripts": {
+    "postinstall": "bash install.sh --npm"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

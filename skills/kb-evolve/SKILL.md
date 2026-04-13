@@ -41,7 +41,7 @@ Create a new import procedure for a source type not yet covered.
 5. Create `{KB_ROOT}/wiki/<procedure-name>/` for source summary pages produced by this procedure
 6. Log to LOG.md (insert below header, above existing entries)
 
-**Template location:** Load `kb-create/assets/templates/import-procedure.md` for the procedure format.
+**Template location:** Load `skills/kb-create/templates/import-procedure.md` for the procedure format.
 
 ### 2. Update CONSTITUTION
 
@@ -116,8 +116,8 @@ Manage the KB registry at `.kb/registry.md` (in the agent's root directory).
 Extend the KB with new analysis or utility scripts.
 
 **Placement:**
-- Query scripts → `kb-query/scripts/`
-- Maintenance scripts → `kb-maintain/scripts/`
+- Query scripts → `skills/kb-query/scripts/`
+- Maintenance scripts → `skills/kb-maintain/scripts/`
 
 All scripts should:
 - Parse `[[wikilinks]]` from markdown files

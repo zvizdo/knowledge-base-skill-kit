@@ -166,7 +166,7 @@ tags: [domain-specific tags]
 - `synthesis-type`: comparison | pattern | contradiction | gap-analysis | framework-application
 - `derived-from`: list of wiki page slugs whose content was used to produce the synthesis (enables staleness detection and impact analysis)
 
-See `kb-query/references/query-patterns.md` for the full synthesis page structure.
+See `skills/kb-query/references/query-patterns.md` for the full synthesis page structure.
 
 Domain-specific frontmatter fields are defined in the CONSTITUTION.
 

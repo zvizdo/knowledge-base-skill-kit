@@ -47,7 +47,7 @@ Look for claims in different pages that conflict:
 
 - Read pages on related topics (use the graph neighborhood)
 - Flag any factual contradictions
-- **Action**: Note contradictions in both pages, or create a synthesis page analyzing the conflict (use `synthesis-type: contradiction` and follow the synthesis page structure defined in `kb-query/references/query-patterns.md`)
+- **Action**: Note contradictions in both pages, or create a synthesis page analyzing the conflict (use `synthesis-type: contradiction` and follow the synthesis page structure defined in `skills/kb-query/references/query-patterns.md`)
 
 ### 3. Staleness Check
 
@@ -108,7 +108,7 @@ Surface places in the graph where a synthesis page would add value — connectin
 - **Stale**: [[Existing Synthesis]] — derived-from pages updated since last synthesis update
 ```
 
-**Action — interactive runs:** Present the list to the user. For approved candidates, create synthesis pages immediately following the structure in `kb-query/references/query-patterns.md`. Do NOT auto-create.
+**Action — interactive runs:** Present the list to the user. For approved candidates, create synthesis pages immediately following the structure in `skills/kb-query/references/query-patterns.md`. Do NOT auto-create.
 
 **Action — scheduled/autonomous runs:** If the user has explicitly configured maintenance to run autonomously (e.g., on a cron schedule with auto-synthesis enabled), create synthesis pages for **clear-cut cases only**:
 - Contradictions between pages that directly conflict on a specific factual claim

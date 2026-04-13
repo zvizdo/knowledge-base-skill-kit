@@ -65,7 +65,7 @@ Extract:
 - Extraction rules per procedure
 - Connection rules per procedure
 
-Each import procedure becomes a file in `imports/`. Use the template from `assets/templates/import-procedure.md`.
+Each import procedure becomes a file in `imports/`. Use the template from `templates/import-procedure.md`.
 
 ### Phase 4 — Structure & Preferences
 
@@ -107,9 +107,9 @@ Once all phases are confirmed, generate the knowledge base. Load `references/cre
 
    For each import procedure defined in Phase 3, create a corresponding `wiki/<procedure-name>/` folder. These hold source summary pages created during imports (e.g. `wiki/research-papers/`, `wiki/meeting-notes/`).
 
-2. Generate **CONSTITUTION.md** from all extracted answers (use template from `assets/templates/constitution.md`)
-3. Generate **import procedure files** in `imports/` (use template from `assets/templates/import-procedure.md`)
-4. Initialize **LOG.md** with the creation entry (use template from `assets/templates/log.md`)
+2. Generate **CONSTITUTION.md** from all extracted answers (use template from `templates/constitution.md`)
+3. Generate **import procedure files** in `imports/` (use template from `templates/import-procedure.md`)
+4. Initialize **LOG.md** with the creation entry (use template from `templates/log.md`)
 5. Write **.kb/config.md** with the collection name, absolute path, and settings
 
 6. **Register the KB.** Append an entry to `.kb/registry.md` (in the agent's root working directory):

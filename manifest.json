@@ -1,0 +1,75 @@
+{
+  "$schema": "https://claude.ai/schemas/plugin-manifest/v1",
+  "name": "knowledge-base-skill-kit",
+  "version": "1.0.0",
+  "description": "Five skills for building and maintaining a persistent, interlinked knowledge base — creation wizard, import orchestrator, graph-traversal query engine, health-check maintenance, and structural evolution.",
+  "author": {
+    "name": "Anže Kravanja",
+    "url": "https://github.com/zvizdo"
+  },
+  "repository": "https://github.com/zvizdo/knowledge-base-skill-kit",
+  "license": "MIT",
+  "skills": [
+    {
+      "name": "kb-create",
+      "path": "skills/kb-create/SKILL.md",
+      "description": "Guided wizard that scaffolds a new personal knowledge base — interactively defines purpose, entities, concepts, import procedures, and folder structure."
+    },
+    {
+      "name": "kb-import",
+      "path": "skills/kb-import/SKILL.md",
+      "description": "Processes a source into the KB wiki using the appropriate import procedure, creates/updates wiki pages, cross-links, and syncs the search index."
+    },
+    {
+      "name": "kb-query",
+      "path": "skills/kb-query/SKILL.md",
+      "description": "Graph-traversal query engine that finds entry points via filesystem scan and qmd, walks wikilink connections to gather context, and synthesizes answers grounded in the graph."
+    },
+    {
+      "name": "kb-maintain",
+      "path": "skills/kb-maintain/SKILL.md",
+      "description": "Health-check pass — finds orphans, contradictions, stale pages, and uses graph algorithms to predict missing connections."
+    },
+    {
+      "name": "kb-evolve",
+      "path": "skills/kb-evolve/SKILL.md",
+      "description": "Structural evolution — add new import procedures, update the CONSTITUTION, restructure wiki folders, merge or split pages, and extend tooling."
+    }
+  ],
+  "permissions": [
+    "Bash(qmd collection:*)",
+    "Bash(qmd context:*)",
+    "Bash(qmd update:*)",
+    "Bash(qmd embed:*)",
+    "Bash(qmd vsearch:*)",
+    "Bash(qmd search:*)",
+    "Bash(python scripts/*)",
+    "Bash(git init:*)",
+    "Bash(git add:*)",
+    "Bash(git commit:*)",
+    "Bash(git remote:*)",
+    "Bash(git push:*)",
+    "Bash(git pull:*)"
+  ],
+  "dependencies": {
+    "required": [
+      {
+        "name": "qmd",
+        "description": "Local hybrid search engine (BM25 + vector + LLM re-ranking)",
+        "install": "bun install -g @tobilu/qmd"
+      },
+      {
+        "name": "python",
+        "version": ">=3.10",
+        "description": "Required for graph analysis scripts"
+      }
+    ],
+    "recommended": [
+      {
+        "name": "qmd-skill",
+        "description": "Companion skill that teaches the agent how to use qmd",
+        "url": "https://github.com/levineam/qmd-skill"
+      }
+    ]
+  }
+}

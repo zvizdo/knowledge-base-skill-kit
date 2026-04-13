@@ -4,6 +4,38 @@ A skill kit where LLMs build and maintain a persistent, interlinked wiki from yo
 
 This is not a one-time "sources to graph" conversion. The knowledge base is a living system — it grows with every import, sharpens with every query, and self-corrects through periodic maintenance. Each cycle of import → query → maintain compounds the value of what came before. The more you use it, the more it knows, and the better its answers get.
 
+## Installation
+
+### Option 1 — Claude Code plugin (recommended)
+
+```bash
+claude plugin install zvizdo/knowledge-base-skill-kit
+```
+
+This installs all five skills into `~/.claude/skills/` using the Claude Code plugin system.
+
+### Option 2 — Shell installer
+
+```bash
+git clone https://github.com/zvizdo/knowledge-base-skill-kit.git
+cd knowledge-base-skill-kit
+bash install.sh
+```
+
+### Option 3 — npm
+
+```bash
+npm install -g knowledge-base-skill-kit
+```
+
+The `postinstall` script copies skills into `~/.claude/skills/` automatically.
+
+### Option 4 — Manual
+
+Copy any or all of the `skills/kb-*/` directories into your agent's skills directory (typically `~/.claude/skills/`).
+
+---
+
 ## How It Works
 
 The user never writes the wiki. The LLM writes and maintains all of it. The user curates sources, directs analysis, and asks questions.
@@ -30,43 +62,46 @@ Knowledge compounds over time. Early imports create isolated pages; later import
 
 ```
 knowledge-base-skill-kit/
-├── kb-create/
-│   ├── SKILL.md                    # Creation wizard
-│   ├── references/
-│   │   └── creation-guide.md       # Deep reference for scaffolding
-│   └── assets/
-│       └── templates/
-│           ├── constitution.md     # CONSTITUTION template
-│           ├── config.md           # .kb/config template
-│           ├── log.md              # LOG template
-│           └── import-procedure.md # Import procedure template
-├── kb-import/
-│   ├── SKILL.md                    # Import orchestrator
-│   └── references/
-│       └── import-guide.md         # Import procedure authoring guide
-├── kb-query/
-│   ├── SKILL.md                    # Graph-traversal query engine
-│   ├── scripts/
-│   │   ├── shortest-path.py        # Find shortest path(s) between two pages
-│   │   ├── neighborhood.py         # All pages within N hops of a starting page
-│   │   ├── shared-connections.py   # Common connections between two pages
-│   │   └── frontmatter.py          # Extract frontmatter fields without reading full pages
-│   └── references/
-│       └── query-patterns.md       # Query types and output formats
-├── kb-maintain/
-│   ├── SKILL.md                    # Maintenance procedures
-│   ├── scripts/
-│   │   ├── jaccard-similarity.py   # Predict missing links via Jaccard index
-│   │   ├── common-neighbors.py     # Surface pages that should link but don't
-│   │   ├── adamic-adar.py          # Weighted link prediction
-│   │   └── cluster-detection.py    # Find clusters and bridge pages
-│   └── references/
-│       └── maintenance-ops.md      # Detailed maintenance procedures
-├── kb-evolve/
-│   ├── SKILL.md                    # Evolution operations
-│   └── references/
-│       └── evolution-guide.md      # Restructuring and extension guide
-└── README.md                       # This file
+├── manifest.json               # Plugin manifest (marketplace & permissions)
+├── package.json                # npm package
+├── install.sh                  # Shell installer
+├── skills/
+│   ├── kb-create/
+│   │   ├── SKILL.md                    # Creation wizard
+│   │   ├── references/
+│   │   │   └── creation-guide.md       # Deep reference for scaffolding
+│   │   └── templates/
+│   │       ├── constitution.md         # CONSTITUTION template
+│   │       ├── config.md               # .kb/config template
+│   │       ├── log.md                  # LOG template
+│   │       └── import-procedure.md     # Import procedure template
+│   ├── kb-import/
+│   │   ├── SKILL.md                    # Import orchestrator
+│   │   └── references/
+│   │       └── import-guide.md         # Import procedure authoring guide
+│   ├── kb-query/
+│   │   ├── SKILL.md                    # Graph-traversal query engine
+│   │   ├── scripts/
+│   │   │   ├── shortest-path.py        # Find shortest path(s) between two pages
+│   │   │   ├── neighborhood.py         # All pages within N hops of a starting page
+│   │   │   ├── shared-connections.py   # Common connections between two pages
+│   │   │   └── frontmatter.py          # Extract frontmatter fields without reading full pages
+│   │   └── references/
+│   │       └── query-patterns.md       # Query types and output formats
+│   ├── kb-maintain/
+│   │   ├── SKILL.md                    # Maintenance procedures
+│   │   ├── scripts/
+│   │   │   ├── jaccard-similarity.py   # Predict missing links via Jaccard index
+│   │   │   ├── common-neighbors.py     # Surface pages that should link but don't
+│   │   │   ├── adamic-adar.py          # Weighted link prediction
+│   │   │   └── cluster-detection.py    # Find clusters and bridge pages
+│   │   └── references/
+│   │       └── maintenance-ops.md      # Detailed maintenance procedures
+│   └── kb-evolve/
+│       ├── SKILL.md                    # Evolution operations
+│       └── references/
+│           └── evolution-guide.md      # Restructuring and extension guide
+└── README.md                           # This file
 ```
 
 ## Dependencies
@@ -134,7 +169,7 @@ A **registry file** is also created at `.kb/registry.md` in the agent's root wor
 ## Getting Started
 
 1. Install dependencies (qmd, qmd skill, Python 3.10+)
-2. Install this skill kit in your agent's skills directory
+2. Install this skill kit using one of the methods above
 3. Run `kb-create` and follow the guided wizard
 4. Drop source files into `raw/` and run `kb-import`
 5. Ask questions with `kb-query`

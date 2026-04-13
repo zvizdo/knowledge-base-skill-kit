@@ -12,6 +12,10 @@ venv/
 .DS_Store
 Thumbs.db
 
+# npm
+node_modules/
+package-lock.json
+
 # Editors
 *.swp
 *.swo
